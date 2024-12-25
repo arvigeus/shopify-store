@@ -1,13 +1,39 @@
 @font-face {
-  font-family: 'IBMPlexSerif';
+  font-family: 'ITC Stepp';
+  font-weight: 700;
+  font-style: normal;
   font-display: swap;
-  font-weight: 400;
-  src: url('./fonts/IBMPlexSerif-Text.woff2') format('woff2');
+  src: url('./fonts/itcstepp_n7.woff') format('woff');
 }
+
 @font-face {
-  font-family: 'IBMPlexSerif';
+  font-family: 'Harmonia Sans';
+  font-weight: 400;
+  font-style: normal;
   font-display: swap;
+  src: url('./fonts/harmoniasans_n4.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Harmonia Sans';
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  src: url('./fonts/harmoniasans_n6.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Harmonia Sans';
   font-weight: 400;
   font-style: italic;
-  src: url('./fonts/IBMPlexSerif-TextItalic.woff2') format('woff2');
+  font-display: swap;
+  src: url('./fonts/harmoniasans_n6.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Harmonia Sans';
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+  src: url('./fonts/harmoniasans_n6.woff') format('woff');
 }
