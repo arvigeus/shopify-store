@@ -10,15 +10,14 @@
     "preview": "npm run build && shopify hydrogen preview",
     "e2e": "npx playwright test",
     "e2e:ui": "npx playwright test --ui",
-    "lint": "eslint --no-error-on-unmatched-pattern --ext .js,.ts,.jsx,.tsx .",
-    "format": "prettier --write --ignore-unknown .",
-    "format:check": "prettier --check --ignore-unknown .",
-    "typecheck": "tsc --noEmit"
+    "lint": "eslint --fix .",
+    "format": "prettier --write .",
+    "typecheck": "tsc",
+    "validate": "run-p lint typecheck"
   },
   "browserslist": [
     "defaults"
   ],
-  "prettier": "@shopify/prettier-config",
   "dependencies": {
     "@headlessui/react": "^1.7.2",
     "@remix-run/node": "^2.13.1",
@@ -41,6 +40,7 @@
     "typographic-base": "^1.0.4"
   },
   "devDependencies": {
+    "@epic-web/config": "^1.16.4",
     "@graphql-codegen/cli": "^5.0.2",
     "@playwright/test": "^1.48.2",
     "@remix-run/dev": "^2.13.1",
@@ -49,7 +49,6 @@
     "@shopify/hydrogen-codegen": "^0.3.2",
     "@shopify/mini-oxygen": "^3.1.0",
     "@shopify/oxygen-workers-types": "^4.1.2",
-    "@shopify/prettier-config": "^1.1.2",
     "@tailwindcss/forms": "^0.5.3",
     "@tailwindcss/typography": "^0.5.9",
     "@total-typescript/ts-reset": "^0.4.2",
@@ -60,10 +59,11 @@
     "cross-env": "^7.0.3",
     "eslint": "^8.20.0",
     "eslint-plugin-hydrogen": "0.12.2",
+    "npm-run-all": "^4.1.5",
     "postcss": "^8.4.21",
     "postcss-import": "^15.1.0",
     "postcss-preset-env": "^8.2.0",
-    "prettier": "^2.8.4",
+    "prettier": "^3.4.2",
     "rimraf": "^3.0.2",
     "tailwindcss": "^3.3.0",
     "typescript": "^5.2.2",
