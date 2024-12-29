@@ -1,5 +1,7 @@
-node_modules
 build
+bin
 dist
 playwright-report
+*.generated.d.ts
 CHANGELOG.md
+package-lock.json

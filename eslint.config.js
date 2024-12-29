@@ -18,5 +18,6 @@ export default [
 		rules: {
 			...hydrogenPlugin.configs.hydrogen.rules,
 		},
+		ignores: ['build', 'node_modules', 'bin', '*.d.ts', 'dist'],
 	},
 ]

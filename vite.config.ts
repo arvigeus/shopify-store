@@ -9,6 +9,7 @@ export default defineConfig({
 		hydrogen(),
 		oxygen(),
 		remix({
+			ignoredRouteFiles: ['**/*.css'],
 			presets: [hydrogen.preset()],
 			future: {
 				v3_fetcherPersist: true,
