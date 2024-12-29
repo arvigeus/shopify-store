@@ -35,7 +35,9 @@ runs:
 
     - name: 📄 Get installed Playwright version
       shell: 'bash'
-      run: echo "PLAYWRIGHT_VERSION=$(npm ls @playwright/test | grep @playwright -m 1 | sed 's/.*@//')"  >> $GITHUB_ENV
+      run:
+        echo "PLAYWRIGHT_VERSION=$(npm ls @playwright/test | grep @playwright -m
+        1 | sed 's/.*@//')"  >> $GITHUB_ENV
 
     - name: 💾 Cache Playwright binaries
       uses: actions/cache@v3
@@ -57,7 +59,9 @@ runs:
 
     - name: 🍄 Run Playwright tests
       shell: 'bash'
-      run: URL=${{ inputs.url }} AUTH_BYPASS_TOKEN=${{ inputs.auth-bypass-token }} npx playwright test
+      run:
+        URL=${{ inputs.url }} AUTH_BYPASS_TOKEN=${{ inputs.auth-bypass-token }}
+        npx playwright test
 
     - name: 🗒 Report
       uses: actions/upload-artifact@v3

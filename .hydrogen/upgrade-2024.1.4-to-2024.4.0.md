@@ -97,45 +97,47 @@ export default function App() {
 
 #### Step: 3. Merge root route meta data [#1875](https://github.com/Shopify/hydrogen/pull/1875)
 
-[#1875](https://github.com/Shopify/hydrogen/pull/1875)
-If your root route loader also returns an seo property, make sure to merge that data:
+[#1875](https://github.com/Shopify/hydrogen/pull/1875) If your root route loader
+also returns an seo property, make sure to merge that data:
 
 ```js
-export const meta = ({data, matches}) => {
-  return getSeoMeta(
-    matches[0].data.seo,
-    // the current route seo data overrides the root route data
-    data.seo,
-  );
-};
+export const meta = ({ data, matches }) => {
+	return getSeoMeta(
+		matches[0].data.seo,
+		// the current route seo data overrides the root route data
+		data.seo,
+	)
+}
 ```
 
 Or more simply:
 
 ```js
-export const meta = ({data, matches}) => {
-  return getSeoMeta(...matches.map((match) => match.data.seo));
-};
+export const meta = ({ data, matches }) => {
+	return getSeoMeta(...matches.map((match) => match.data.seo))
+}
 ```
 
 #### Step: 4. Override meta [#1875](https://github.com/Shopify/hydrogen/pull/1875)
 
-[#1875](https://github.com/Shopify/hydrogen/pull/1875)
-Sometimes getSeoMeta might produce a property in a way you'd like to change. Map over the resulting array to change it. For example, Hydrogen removes query parameters from canonical URLs, add them back:
+[#1875](https://github.com/Shopify/hydrogen/pull/1875) Sometimes getSeoMeta
+might produce a property in a way you'd like to change. Map over the resulting
+array to change it. For example, Hydrogen removes query parameters from
+canonical URLs, add them back:
 
 ```js
-export const meta = ({data, location}) => {
-  return getSeoMeta(data.seo).map((meta) => {
-    if (meta.rel === 'canonical') {
-      return {
-        ...meta,
-        href: meta.href + location.search,
-      };
-    }
+export const meta = ({ data, location }) => {
+	return getSeoMeta(data.seo).map((meta) => {
+		if (meta.rel === 'canonical') {
+			return {
+				...meta,
+				href: meta.href + location.search,
+			}
+		}
 
-    return meta;
-  });
-};
+		return meta
+	})
+}
 ```
 
 ### Codegen dependencies must be now listed explicitly in package.json [#1962](https://github.com/Shopify/hydrogen/pull/1962)
@@ -172,22 +174,22 @@ export const meta = ({data, location}) => {
 
 ```ts
 import {
-  createCartHandler,
-  cartGetIdDefault,
-  cartSetIdDefault,
-} from '@shopify/hydrogen';
+	createCartHandler,
+	cartGetIdDefault,
+	cartSetIdDefault,
+} from '@shopify/hydrogen'
 
 const cartHandler = createCartHandler({
-  storefront,
-  getCartId: cartGetIdDefault(request.headers),
-  setCartId: cartSetIdDefault(),
-  cartQueryFragment: CART_QUERY_FRAGMENT,
-  cartMutateFragment: CART_MUTATE_FRAGMENT,
-});
+	storefront,
+	getCartId: cartGetIdDefault(request.headers),
+	setCartId: cartSetIdDefault(),
+	cartQueryFragment: CART_QUERY_FRAGMENT,
+	cartMutateFragment: CART_MUTATE_FRAGMENT,
+})
 
-await cartHandler.addLines([{merchandiseId: '...'}]);
+await cartHandler.addLines([{ merchandiseId: '...' }])
 // .get() now returns the cart as expected
-const cart = await cartHandler.get();
+const cart = await cartHandler.get()
 ```
 
 ### Update Vite plugin imports, and how their options are passed to Remix [#1935](https://github.com/Shopify/hydrogen/pull/1935)

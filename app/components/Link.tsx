@@ -1,16 +1,16 @@
 import {
-  Link as RemixLink,
-  NavLink as RemixNavLink,
-  type NavLinkProps as RemixNavLinkProps,
-  type LinkProps as RemixLinkProps,
-  useRouteLoaderData,
-} from '@remix-run/react';
+	Link as RemixLink,
+	NavLink as RemixNavLink,
+	type NavLinkProps as RemixNavLinkProps,
+	type LinkProps as RemixLinkProps,
+	useRouteLoaderData,
+} from '@remix-run/react'
 
-import type {RootLoader} from '~/root';
+import type { RootLoader } from '~/root'
 
 type LinkProps = Omit<RemixLinkProps, 'className'> & {
-  className?: RemixNavLinkProps['className'] | RemixLinkProps['className'];
-};
+	className?: RemixNavLinkProps['className'] | RemixLinkProps['className']
+}
 
 /**
  * In our app, we've chosen to wrap Remix's `Link` component to add
@@ -28,23 +28,23 @@ type LinkProps = Omit<RemixLinkProps, 'className'> & {
  * Ultimately, it is up to you to decide how to implement this behavior.
  */
 export function Link(props: LinkProps) {
-  const {to, className, ...resOfProps} = props;
-  const rootData = useRouteLoaderData<RootLoader>('root');
-  const selectedLocale = rootData?.selectedLocale;
+	const { to, className, ...resOfProps } = props
+	const rootData = useRouteLoaderData<RootLoader>('root')
+	const selectedLocale = rootData?.selectedLocale
 
-  let toWithLocale = to;
+	let toWithLocale = to
 
-  if (typeof toWithLocale === 'string' && selectedLocale?.pathPrefix) {
-    if (!toWithLocale.toLowerCase().startsWith(selectedLocale.pathPrefix)) {
-      toWithLocale = `${selectedLocale.pathPrefix}${to}`;
-    }
-  }
+	if (typeof toWithLocale === 'string' && selectedLocale?.pathPrefix) {
+		if (!toWithLocale.toLowerCase().startsWith(selectedLocale.pathPrefix)) {
+			toWithLocale = `${selectedLocale.pathPrefix}${to}`
+		}
+	}
 
-  if (typeof className === 'function') {
-    return (
-      <RemixNavLink to={toWithLocale} className={className} {...resOfProps} />
-    );
-  }
+	if (typeof className === 'function') {
+		return (
+			<RemixNavLink to={toWithLocale} className={className} {...resOfProps} />
+		)
+	}
 
-  return <RemixLink to={toWithLocale} className={className} {...resOfProps} />;
+	return <RemixLink to={toWithLocale} className={className} {...resOfProps} />
 }

@@ -1,109 +1,109 @@
 import {
-  json,
-  type MetaArgs,
-  type LoaderFunctionArgs,
-} from '@shopify/remix-oxygen';
-import {useLoaderData} from '@remix-run/react';
-import invariant from 'tiny-invariant';
+	json,
+	type MetaArgs,
+	type LoaderFunctionArgs,
+} from '@shopify/remix-oxygen'
+import { useLoaderData } from '@remix-run/react'
+import invariant from 'tiny-invariant'
 import {
-  Pagination,
-  getPaginationVariables,
-  getSeoMeta,
-} from '@shopify/hydrogen';
+	Pagination,
+	getPaginationVariables,
+	getSeoMeta,
+} from '@shopify/hydrogen'
 
-import {PageHeader, Section} from '~/components/Text';
-import {ProductCard} from '~/components/ProductCard';
-import {Grid} from '~/components/Grid';
-import {PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
-import {getImageLoadingPriority} from '~/lib/const';
-import {seoPayload} from '~/lib/seo.server';
-import {routeHeaders} from '~/data/cache';
+import { PageHeader, Section } from '~/components/Text'
+import { ProductCard } from '~/components/ProductCard'
+import { Grid } from '~/components/Grid'
+import { PRODUCT_CARD_FRAGMENT } from '~/data/fragments'
+import { getImageLoadingPriority } from '~/lib/const'
+import { seoPayload } from '~/lib/seo.server'
+import { routeHeaders } from '~/data/cache'
 
-const PAGE_BY = 8;
+const PAGE_BY = 8
 
-export const headers = routeHeaders;
+export const headers = routeHeaders
 
 export async function loader({
-  request,
-  context: {storefront},
+	request,
+	context: { storefront },
 }: LoaderFunctionArgs) {
-  const variables = getPaginationVariables(request, {pageBy: PAGE_BY});
+	const variables = getPaginationVariables(request, { pageBy: PAGE_BY })
 
-  const data = await storefront.query(ALL_PRODUCTS_QUERY, {
-    variables: {
-      ...variables,
-      country: storefront.i18n.country,
-      language: storefront.i18n.language,
-    },
-  });
+	const data = await storefront.query(ALL_PRODUCTS_QUERY, {
+		variables: {
+			...variables,
+			country: storefront.i18n.country,
+			language: storefront.i18n.language,
+		},
+	})
 
-  invariant(data, 'No data returned from Shopify API');
+	invariant(data, 'No data returned from Shopify API')
 
-  const seo = seoPayload.collection({
-    url: request.url,
-    collection: {
-      id: 'all-products',
-      title: 'All Products',
-      handle: 'products',
-      descriptionHtml: 'All the store products',
-      description: 'All the store products',
-      seo: {
-        title: 'All Products',
-        description: 'All the store products',
-      },
-      metafields: [],
-      products: data.products,
-      updatedAt: '',
-    },
-  });
+	const seo = seoPayload.collection({
+		url: request.url,
+		collection: {
+			id: 'all-products',
+			title: 'All Products',
+			handle: 'products',
+			descriptionHtml: 'All the store products',
+			description: 'All the store products',
+			seo: {
+				title: 'All Products',
+				description: 'All the store products',
+			},
+			metafields: [],
+			products: data.products,
+			updatedAt: '',
+		},
+	})
 
-  return json({
-    products: data.products,
-    seo,
-  });
+	return json({
+		products: data.products,
+		seo,
+	})
 }
 
-export const meta = ({matches}: MetaArgs<typeof loader>) => {
-  return getSeoMeta(...matches.map((match) => (match.data as any).seo));
-};
+export const meta = ({ matches }: MetaArgs<typeof loader>) => {
+	return getSeoMeta(...matches.map((match) => (match.data as any).seo))
+}
 
 export default function AllProducts() {
-  const {products} = useLoaderData<typeof loader>();
+	const { products } = useLoaderData<typeof loader>()
 
-  return (
-    <>
-      <PageHeader heading="All Products" variant="allCollections" />
-      <Section>
-        <Pagination connection={products}>
-          {({nodes, isLoading, NextLink, PreviousLink}) => {
-            const itemsMarkup = nodes.map((product, i) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                loading={getImageLoadingPriority(i)}
-              />
-            ));
+	return (
+		<>
+			<PageHeader heading="All Products" variant="allCollections" />
+			<Section>
+				<Pagination connection={products}>
+					{({ nodes, isLoading, NextLink, PreviousLink }) => {
+						const itemsMarkup = nodes.map((product, i) => (
+							<ProductCard
+								key={product.id}
+								product={product}
+								loading={getImageLoadingPriority(i)}
+							/>
+						))
 
-            return (
-              <>
-                <div className="flex items-center justify-center mt-6">
-                  <PreviousLink className="inline-block rounded font-medium text-center py-3 px-6 border border-primary/10 bg-contrast text-primary w-full">
-                    {isLoading ? 'Loading...' : 'Previous'}
-                  </PreviousLink>
-                </div>
-                <Grid data-test="product-grid">{itemsMarkup}</Grid>
-                <div className="flex items-center justify-center mt-6">
-                  <NextLink className="inline-block rounded font-medium text-center py-3 px-6 border border-primary/10 bg-contrast text-primary w-full">
-                    {isLoading ? 'Loading...' : 'Next'}
-                  </NextLink>
-                </div>
-              </>
-            );
-          }}
-        </Pagination>
-      </Section>
-    </>
-  );
+						return (
+							<>
+								<div className="mt-6 flex items-center justify-center">
+									<PreviousLink className="inline-block w-full rounded border border-primary/10 bg-contrast px-6 py-3 text-center font-medium text-primary">
+										{isLoading ? 'Loading...' : 'Previous'}
+									</PreviousLink>
+								</div>
+								<Grid data-test="product-grid">{itemsMarkup}</Grid>
+								<div className="mt-6 flex items-center justify-center">
+									<NextLink className="inline-block w-full rounded border border-primary/10 bg-contrast px-6 py-3 text-center font-medium text-primary">
+										{isLoading ? 'Loading...' : 'Next'}
+									</NextLink>
+								</div>
+							</>
+						)
+					}}
+				</Pagination>
+			</Section>
+		</>
+	)
 }
 
 const ALL_PRODUCTS_QUERY = `#graphql
@@ -128,4 +128,4 @@ const ALL_PRODUCTS_QUERY = `#graphql
     }
   }
   ${PRODUCT_CARD_FRAGMENT}
-` as const;
+` as const

@@ -1,9 +1,9 @@
-import {json, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
-import type {ProductSortKeys} from '@shopify/hydrogen/storefront-api-types';
-import {flattenConnection} from '@shopify/hydrogen';
-import invariant from 'tiny-invariant';
+import { json, type LoaderFunctionArgs } from '@shopify/remix-oxygen'
+import type { ProductSortKeys } from '@shopify/hydrogen/storefront-api-types'
+import { flattenConnection } from '@shopify/hydrogen'
+import invariant from 'tiny-invariant'
 
-import {PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
+import { PRODUCT_CARD_FRAGMENT } from '~/data/fragments'
 
 /**
  * Fetch a given set of products from the storefront API
@@ -15,53 +15,53 @@ import {PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
  * @see https://shopify.dev/api/storefront/current/queries/products
  */
 export async function loader({
-  request,
-  context: {storefront},
+	request,
+	context: { storefront },
 }: LoaderFunctionArgs) {
-  const url = new URL(request.url);
-  const searchParams = new URLSearchParams(url.search);
+	const url = new URL(request.url)
+	const searchParams = new URLSearchParams(url.search)
 
-  const query = searchParams.get('query') ?? '';
-  const sortKey =
-    (searchParams.get('sortKey') as null | ProductSortKeys) ?? 'BEST_SELLING';
+	const query = searchParams.get('query') ?? ''
+	const sortKey =
+		(searchParams.get('sortKey') as null | ProductSortKeys) ?? 'BEST_SELLING'
 
-  let reverse = false;
-  try {
-    const _reverse = searchParams.get('reverse');
-    if (_reverse === 'true') {
-      reverse = true;
-    }
-  } catch (_) {
-    // noop
-  }
+	let reverse = false
+	try {
+		const _reverse = searchParams.get('reverse')
+		if (_reverse === 'true') {
+			reverse = true
+		}
+	} catch (_) {
+		// noop
+	}
 
-  let count = 4;
-  try {
-    const _count = searchParams.get('count');
-    if (typeof _count === 'string') {
-      count = parseInt(_count);
-    }
-  } catch (_) {
-    // noop
-  }
+	let count = 4
+	try {
+		const _count = searchParams.get('count')
+		if (typeof _count === 'string') {
+			count = parseInt(_count)
+		}
+	} catch (_) {
+		// noop
+	}
 
-  const {products} = await storefront.query(API_ALL_PRODUCTS_QUERY, {
-    variables: {
-      count,
-      query,
-      reverse,
-      sortKey,
-      country: storefront.i18n.country,
-      language: storefront.i18n.language,
-    },
-    cache: storefront.CacheLong(),
-  });
+	const { products } = await storefront.query(API_ALL_PRODUCTS_QUERY, {
+		variables: {
+			count,
+			query,
+			reverse,
+			sortKey,
+			country: storefront.i18n.country,
+			language: storefront.i18n.language,
+		},
+		cache: storefront.CacheLong(),
+	})
 
-  invariant(products, 'No data returned from top products query');
+	invariant(products, 'No data returned from top products query')
 
-  return json({
-    products: flattenConnection(products),
-  });
+	return json({
+		products: flattenConnection(products),
+	})
 }
 
 const API_ALL_PRODUCTS_QUERY = `#graphql
@@ -80,9 +80,9 @@ const API_ALL_PRODUCTS_QUERY = `#graphql
     }
   }
   ${PRODUCT_CARD_FRAGMENT}
-` as const;
+` as const
 
 // no-op
 export default function ProductsApiRoute() {
-  return null;
+	return null
 }

@@ -237,23 +237,23 @@ export default {
 [#2546](https://github.com/Shopify/hydrogen/pull/2546)
 
 ```ts
-const withCache = createWithCache({cache, waitUntil, request});
+const withCache = createWithCache({ cache, waitUntil, request })
 
-const {data, response} = await withCache.fetch<{data: T; error: string}>(
-  'my-cms.com/api',
-  {
-    method: 'POST',
-    headers: {'Content-type': 'application/json'},
-    body,
-  },
-  {
-    cacheStrategy: CacheLong(),
-    // Cache if there are no data errors or a specific data that make this result not suited for caching
-    shouldCacheResponse: (result) => !result?.error,
-    cacheKey: ['my-cms', body],
-    displayName: 'My CMS query',
-  },
-);
+const { data, response } = await withCache.fetch<{ data: T; error: string }>(
+	'my-cms.com/api',
+	{
+		method: 'POST',
+		headers: { 'Content-type': 'application/json' },
+		body,
+	},
+	{
+		cacheStrategy: CacheLong(),
+		// Cache if there are no data errors or a specific data that make this result not suited for caching
+		shouldCacheResponse: (result) => !result?.error,
+		cacheKey: ['my-cms', body],
+		displayName: 'My CMS query',
+	},
+)
 ```
 
 #### Step: 3. The original `withCache` callback function is now `withCache.run`. This is useful to run _multiple_ fetch calls and merge their responses, or run any arbitrary code. It caches anything you return, but you can throw if you don't want to cache anything. [#2546](https://github.com/Shopify/hydrogen/pull/2546)

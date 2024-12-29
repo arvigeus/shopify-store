@@ -8,4 +8,4 @@ mutation customerUpdate($customer: CustomerUpdateInput!) {
     }
   }
 }
-`;
+`

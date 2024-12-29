@@ -1,196 +1,196 @@
 import {
-  defer,
-  type MetaArgs,
-  type LoaderFunctionArgs,
-} from '@shopify/remix-oxygen';
-import {Await, Form, useLoaderData} from '@remix-run/react';
-import {Suspense} from 'react';
+	defer,
+	type MetaArgs,
+	type LoaderFunctionArgs,
+} from '@shopify/remix-oxygen'
+import { Await, Form, useLoaderData } from '@remix-run/react'
+import { Suspense } from 'react'
 import {
-  Pagination,
-  getPaginationVariables,
-  Analytics,
-  getSeoMeta,
-} from '@shopify/hydrogen';
+	Pagination,
+	getPaginationVariables,
+	Analytics,
+	getSeoMeta,
+} from '@shopify/hydrogen'
 
-import {Heading, PageHeader, Section, Text} from '~/components/Text';
-import {Input} from '~/components/Input';
-import {Grid} from '~/components/Grid';
-import {ProductCard} from '~/components/ProductCard';
-import {ProductSwimlane} from '~/components/ProductSwimlane';
-import {FeaturedCollections} from '~/components/FeaturedCollections';
-import {PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
-import {getImageLoadingPriority, PAGINATION_SIZE} from '~/lib/const';
-import {seoPayload} from '~/lib/seo.server';
+import { Heading, PageHeader, Section, Text } from '~/components/Text'
+import { Input } from '~/components/Input'
+import { Grid } from '~/components/Grid'
+import { ProductCard } from '~/components/ProductCard'
+import { ProductSwimlane } from '~/components/ProductSwimlane'
+import { FeaturedCollections } from '~/components/FeaturedCollections'
+import { PRODUCT_CARD_FRAGMENT } from '~/data/fragments'
+import { getImageLoadingPriority, PAGINATION_SIZE } from '~/lib/const'
+import { seoPayload } from '~/lib/seo.server'
 
 import {
-  getFeaturedData,
-  type FeaturedData,
-} from './($locale).featured-products';
+	getFeaturedData,
+	type FeaturedData,
+} from './($locale).featured-products'
 
 export async function loader({
-  request,
-  context: {storefront},
+	request,
+	context: { storefront },
 }: LoaderFunctionArgs) {
-  const searchParams = new URL(request.url).searchParams;
-  const searchTerm = searchParams.get('q')!;
-  const variables = getPaginationVariables(request, {pageBy: 8});
+	const searchParams = new URL(request.url).searchParams
+	const searchTerm = searchParams.get('q')!
+	const variables = getPaginationVariables(request, { pageBy: 8 })
 
-  const {products} = await storefront.query(SEARCH_QUERY, {
-    variables: {
-      searchTerm,
-      ...variables,
-      country: storefront.i18n.country,
-      language: storefront.i18n.language,
-    },
-  });
+	const { products } = await storefront.query(SEARCH_QUERY, {
+		variables: {
+			searchTerm,
+			...variables,
+			country: storefront.i18n.country,
+			language: storefront.i18n.language,
+		},
+	})
 
-  const shouldGetRecommendations = !searchTerm || products?.nodes?.length === 0;
+	const shouldGetRecommendations = !searchTerm || products?.nodes?.length === 0
 
-  const seo = seoPayload.collection({
-    url: request.url,
-    collection: {
-      id: 'search',
-      title: 'Search',
-      handle: 'search',
-      descriptionHtml: 'Search results',
-      description: 'Search results',
-      seo: {
-        title: 'Search',
-        description: `Showing ${products.nodes.length} search results for "${searchTerm}"`,
-      },
-      metafields: [],
-      products,
-      updatedAt: new Date().toISOString(),
-    },
-  });
+	const seo = seoPayload.collection({
+		url: request.url,
+		collection: {
+			id: 'search',
+			title: 'Search',
+			handle: 'search',
+			descriptionHtml: 'Search results',
+			description: 'Search results',
+			seo: {
+				title: 'Search',
+				description: `Showing ${products.nodes.length} search results for "${searchTerm}"`,
+			},
+			metafields: [],
+			products,
+			updatedAt: new Date().toISOString(),
+		},
+	})
 
-  return defer({
-    seo,
-    searchTerm,
-    products,
-    noResultRecommendations: shouldGetRecommendations
-      ? getNoResultRecommendations(storefront)
-      : Promise.resolve(null),
-  });
+	return defer({
+		seo,
+		searchTerm,
+		products,
+		noResultRecommendations: shouldGetRecommendations
+			? getNoResultRecommendations(storefront)
+			: Promise.resolve(null),
+	})
 }
 
-export const meta = ({matches}: MetaArgs<typeof loader>) => {
-  return getSeoMeta(...matches.map((match) => (match.data as any).seo));
-};
+export const meta = ({ matches }: MetaArgs<typeof loader>) => {
+	return getSeoMeta(...matches.map((match) => (match.data as any).seo))
+}
 
 export default function Search() {
-  const {searchTerm, products, noResultRecommendations} =
-    useLoaderData<typeof loader>();
-  const noResults = products?.nodes?.length === 0;
+	const { searchTerm, products, noResultRecommendations } =
+		useLoaderData<typeof loader>()
+	const noResults = products?.nodes?.length === 0
 
-  return (
-    <>
-      <PageHeader>
-        <Heading as="h1" size="copy">
-          Search
-        </Heading>
-        <Form method="get" className="relative flex w-full text-heading">
-          <Input
-            defaultValue={searchTerm}
-            name="q"
-            placeholder="Search…"
-            type="search"
-            variant="search"
-          />
-          <button className="absolute right-0 py-2" type="submit">
-            Go
-          </button>
-        </Form>
-      </PageHeader>
-      {!searchTerm || noResults ? (
-        <NoResults
-          noResults={noResults}
-          recommendations={noResultRecommendations}
-        />
-      ) : (
-        <Section>
-          <Pagination connection={products}>
-            {({nodes, isLoading, NextLink, PreviousLink}) => {
-              const itemsMarkup = nodes.map((product, i) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  loading={getImageLoadingPriority(i)}
-                />
-              ));
+	return (
+		<>
+			<PageHeader>
+				<Heading as="h1" size="copy">
+					Search
+				</Heading>
+				<Form method="get" className="relative flex w-full text-heading">
+					<Input
+						defaultValue={searchTerm}
+						name="q"
+						placeholder="Search…"
+						type="search"
+						variant="search"
+					/>
+					<button className="absolute right-0 py-2" type="submit">
+						Go
+					</button>
+				</Form>
+			</PageHeader>
+			{!searchTerm || noResults ? (
+				<NoResults
+					noResults={noResults}
+					recommendations={noResultRecommendations}
+				/>
+			) : (
+				<Section>
+					<Pagination connection={products}>
+						{({ nodes, isLoading, NextLink, PreviousLink }) => {
+							const itemsMarkup = nodes.map((product, i) => (
+								<ProductCard
+									key={product.id}
+									product={product}
+									loading={getImageLoadingPriority(i)}
+								/>
+							))
 
-              return (
-                <>
-                  <div className="flex items-center justify-center mt-6">
-                    <PreviousLink className="inline-block rounded font-medium text-center py-3 px-6 border border-primary/10 bg-contrast text-primary w-full">
-                      {isLoading ? 'Loading...' : 'Previous'}
-                    </PreviousLink>
-                  </div>
-                  <Grid data-test="product-grid">{itemsMarkup}</Grid>
-                  <div className="flex items-center justify-center mt-6">
-                    <NextLink className="inline-block rounded font-medium text-center py-3 px-6 border border-primary/10 bg-contrast text-primary w-full">
-                      {isLoading ? 'Loading...' : 'Next'}
-                    </NextLink>
-                  </div>
-                </>
-              );
-            }}
-          </Pagination>
-        </Section>
-      )}
-      <Analytics.SearchView data={{searchTerm, searchResults: products}} />
-    </>
-  );
+							return (
+								<>
+									<div className="mt-6 flex items-center justify-center">
+										<PreviousLink className="inline-block w-full rounded border border-primary/10 bg-contrast px-6 py-3 text-center font-medium text-primary">
+											{isLoading ? 'Loading...' : 'Previous'}
+										</PreviousLink>
+									</div>
+									<Grid data-test="product-grid">{itemsMarkup}</Grid>
+									<div className="mt-6 flex items-center justify-center">
+										<NextLink className="inline-block w-full rounded border border-primary/10 bg-contrast px-6 py-3 text-center font-medium text-primary">
+											{isLoading ? 'Loading...' : 'Next'}
+										</NextLink>
+									</div>
+								</>
+							)
+						}}
+					</Pagination>
+				</Section>
+			)}
+			<Analytics.SearchView data={{ searchTerm, searchResults: products }} />
+		</>
+	)
 }
 
 function NoResults({
-  noResults,
-  recommendations,
+	noResults,
+	recommendations,
 }: {
-  noResults: boolean;
-  recommendations: Promise<null | FeaturedData>;
+	noResults: boolean
+	recommendations: Promise<null | FeaturedData>
 }) {
-  return (
-    <>
-      {noResults && (
-        <Section padding="x">
-          <Text className="opacity-50">
-            No results, try a different search.
-          </Text>
-        </Section>
-      )}
-      <Suspense>
-        <Await
-          errorElement="There was a problem loading related products"
-          resolve={recommendations}
-        >
-          {(result) => {
-            if (!result) return null;
-            const {featuredCollections, featuredProducts} = result;
+	return (
+		<>
+			{noResults && (
+				<Section padding="x">
+					<Text className="opacity-50">
+						No results, try a different search.
+					</Text>
+				</Section>
+			)}
+			<Suspense>
+				<Await
+					errorElement="There was a problem loading related products"
+					resolve={recommendations}
+				>
+					{(result) => {
+						if (!result) return null
+						const { featuredCollections, featuredProducts } = result
 
-            return (
-              <>
-                <FeaturedCollections
-                  title="Trending Collections"
-                  collections={featuredCollections}
-                />
-                <ProductSwimlane
-                  title="Trending Products"
-                  products={featuredProducts}
-                />
-              </>
-            );
-          }}
-        </Await>
-      </Suspense>
-    </>
-  );
+						return (
+							<>
+								<FeaturedCollections
+									title="Trending Collections"
+									collections={featuredCollections}
+								/>
+								<ProductSwimlane
+									title="Trending Products"
+									products={featuredProducts}
+								/>
+							</>
+						)
+					}}
+				</Await>
+			</Suspense>
+		</>
+	)
 }
 
 export function getNoResultRecommendations(
-  storefront: LoaderFunctionArgs['context']['storefront'],
+	storefront: LoaderFunctionArgs['context']['storefront'],
 ) {
-  return getFeaturedData(storefront, {pageBy: PAGINATION_SIZE});
+	return getFeaturedData(storefront, { pageBy: PAGINATION_SIZE })
 }
 
 const SEARCH_QUERY = `#graphql
@@ -224,4 +224,4 @@ const SEARCH_QUERY = `#graphql
   }
 
   ${PRODUCT_CARD_FRAGMENT}
-` as const;
+` as const

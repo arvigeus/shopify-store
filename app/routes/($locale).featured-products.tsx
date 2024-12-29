@@ -1,34 +1,34 @@
-import {json, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
-import invariant from 'tiny-invariant';
+import { json, type LoaderFunctionArgs } from '@shopify/remix-oxygen'
+import invariant from 'tiny-invariant'
 
 import {
-  PRODUCT_CARD_FRAGMENT,
-  FEATURED_COLLECTION_FRAGMENT,
-} from '~/data/fragments';
+	PRODUCT_CARD_FRAGMENT,
+	FEATURED_COLLECTION_FRAGMENT,
+} from '~/data/fragments'
 
-export async function loader({context: {storefront}}: LoaderFunctionArgs) {
-  return json(await getFeaturedData(storefront));
+export async function loader({ context: { storefront } }: LoaderFunctionArgs) {
+	return json(await getFeaturedData(storefront))
 }
 
 export async function getFeaturedData(
-  storefront: LoaderFunctionArgs['context']['storefront'],
-  variables: {pageBy?: number} = {},
+	storefront: LoaderFunctionArgs['context']['storefront'],
+	variables: { pageBy?: number } = {},
 ) {
-  const data = await storefront.query(FEATURED_ITEMS_QUERY, {
-    variables: {
-      pageBy: 12,
-      country: storefront.i18n.country,
-      language: storefront.i18n.language,
-      ...variables,
-    },
-  });
+	const data = await storefront.query(FEATURED_ITEMS_QUERY, {
+		variables: {
+			pageBy: 12,
+			country: storefront.i18n.country,
+			language: storefront.i18n.language,
+			...variables,
+		},
+	})
 
-  invariant(data, 'No featured items data returned from Shopify API');
+	invariant(data, 'No featured items data returned from Shopify API')
 
-  return data;
+	return data
 }
 
-export type FeaturedData = Awaited<ReturnType<typeof getFeaturedData>>;
+export type FeaturedData = Awaited<ReturnType<typeof getFeaturedData>>
 
 export const FEATURED_ITEMS_QUERY = `#graphql
   query FeaturedItems(
@@ -50,4 +50,4 @@ export const FEATURED_ITEMS_QUERY = `#graphql
 
   ${PRODUCT_CARD_FRAGMENT}
   ${FEATURED_COLLECTION_FRAGMENT}
-` as const;
+` as const

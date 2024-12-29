@@ -11,7 +11,7 @@ permissions:
 jobs:
   deploy:
     name: Deploy to Oxygen
-    if: false  # Disable this until ready to deploy
+    if: false # Disable this until ready to deploy
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
@@ -30,7 +30,9 @@ jobs:
           cache-name: cache-node-modules
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          key:
+            ${{ runner.os }}-build-${{ env.cache-name }}-${{
+            hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
