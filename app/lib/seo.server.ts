@@ -1,26 +1,26 @@
 import { type SeoConfig } from '@shopify/hydrogen'
-import type {
-	Article,
-	Blog,
-	Collection,
-	Page,
-	Product,
-	ProductVariant,
-	ShopPolicy,
-	Image,
+import  {
+	type Article,
+	type Blog,
+	type Collection,
+	type Page,
+	type Product,
+	type ProductVariant,
+	type ShopPolicy,
+	type Image,
 } from '@shopify/hydrogen/storefront-api-types'
-import type {
-	Article as SeoArticle,
-	BreadcrumbList,
-	Blog as SeoBlog,
-	CollectionPage,
-	Offer,
-	Organization,
-	Product as SeoProduct,
-	WebPage,
+import  {
+	type Article as SeoArticle,
+	type BreadcrumbList,
+	type Blog as SeoBlog,
+	type CollectionPage,
+	type Offer,
+	type Organization,
+	type Product as SeoProduct,
+	type WebPage,
 } from 'schema-dts'
 
-import type { ShopFragment } from 'storefrontapi.generated'
+import  { type ShopFragment } from 'storefrontapi.generated'
 
 function root({
 	shop,

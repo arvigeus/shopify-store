@@ -1,11 +1,4 @@
-import { useRef, Suspense } from 'react'
 import { Disclosure, Listbox } from '@headlessui/react'
-import {
-	defer,
-	type MetaArgs,
-	redirect,
-	type LoaderFunctionArgs,
-} from '@shopify/remix-oxygen'
 import { useLoaderData, Await, useNavigate } from '@remix-run/react'
 import {
 	getSeoMeta,
@@ -15,26 +8,33 @@ import {
 	getSelectedProductOptions,
 	Analytics,
 } from '@shopify/hydrogen'
-import invariant from 'tiny-invariant'
+import {
+	defer,
+	type MetaArgs,
+	redirect,
+	type LoaderFunctionArgs,
+} from '@shopify/remix-oxygen'
 import clsx from 'clsx'
+import { useRef, Suspense } from 'react'
 
-import type {
-	ProductQuery,
-	ProductVariantFragmentFragment,
+import  {
+	type ProductQuery,
+	type ProductVariantFragmentFragment,
 } from 'storefrontapi.generated'
-import { Heading, Section, Text } from '~/components/Text'
-import { Link } from '~/components/Link'
-import { Button } from '~/components/Button'
+import invariant from 'tiny-invariant'
 import { AddToCartButton } from '~/components/AddToCartButton'
-import { Skeleton } from '~/components/Skeleton'
-import { ProductSwimlane } from '~/components/ProductSwimlane'
-import { ProductGallery } from '~/components/ProductGallery'
+import { Button } from '~/components/Button'
 import { IconCaret, IconCheck, IconClose } from '~/components/Icon'
-import { getExcerpt } from '~/lib/utils'
-import { seoPayload } from '~/lib/seo.server'
-import type { Storefront } from '~/lib/type'
+import { Link } from '~/components/Link'
+import { ProductGallery } from '~/components/ProductGallery'
+import { ProductSwimlane } from '~/components/ProductSwimlane'
+import { Skeleton } from '~/components/Skeleton'
+import { Heading, Section, Text } from '~/components/Text'
 import { routeHeaders } from '~/data/cache'
 import { MEDIA_FRAGMENT, PRODUCT_CARD_FRAGMENT } from '~/data/fragments'
+import { seoPayload } from '~/lib/seo.server'
+import  { type Storefront } from '~/lib/type'
+import { getExcerpt } from '~/lib/utils'
 
 export const headers = routeHeaders
 

@@ -1,6 +1,6 @@
-import type { CartLineInput } from '@shopify/hydrogen/storefront-api-types'
+import  { type FetcherWithComponents } from '@remix-run/react'
 import { CartForm } from '@shopify/hydrogen'
-import type { FetcherWithComponents } from '@remix-run/react'
+import  { type CartLineInput } from '@shopify/hydrogen/storefront-api-types'
 
 import { Button } from '~/components/Button'
 

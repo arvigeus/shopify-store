@@ -1,4 +1,4 @@
-import type { LoaderFunctionArgs } from '@shopify/remix-oxygen'
+import  { type LoaderFunctionArgs } from '@shopify/remix-oxygen'
 
 import { getSitemapIndex } from 'app/lib/sitemap'
 

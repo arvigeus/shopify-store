@@ -6,24 +6,14 @@ import {
 	useMatches,
 	useOutlet,
 } from '@remix-run/react'
-import { Suspense } from 'react'
-import { defer, type LoaderFunctionArgs } from '@shopify/remix-oxygen'
 import { flattenConnection } from '@shopify/hydrogen'
+import { defer, type LoaderFunctionArgs } from '@shopify/remix-oxygen'
 
-import type {
-	CustomerDetailsFragment,
-	OrderCardFragment,
+import  {
+	type CustomerDetailsFragment,
+	type OrderCardFragment,
 } from 'customer-accountapi.generated'
-import { PageHeader, Text } from '~/components/Text'
-import { Button } from '~/components/Button'
-import { OrderCard } from '~/components/OrderCard'
-import { AccountDetails } from '~/components/AccountDetails'
-import { AccountAddressBook } from '~/components/AccountAddressBook'
-import { Modal } from '~/components/Modal'
-import { ProductSwimlane } from '~/components/ProductSwimlane'
-import { FeaturedCollections } from '~/components/FeaturedCollections'
-import { usePrefixPathWithLocale } from '~/lib/utils'
-import { CACHE_NONE, routeHeaders } from '~/data/cache'
+import { Suspense } from 'react'
 import { CUSTOMER_DETAILS_QUERY } from '~/graphql/customer-account/CustomerDetailsQuery'
 
 import { doLogout } from './($locale).account_.logout'
@@ -31,6 +21,16 @@ import {
 	getFeaturedData,
 	type FeaturedData,
 } from './($locale).featured-products'
+import { AccountAddressBook } from '~/components/AccountAddressBook'
+import { AccountDetails } from '~/components/AccountDetails'
+import { Button } from '~/components/Button'
+import { FeaturedCollections } from '~/components/FeaturedCollections'
+import { Modal } from '~/components/Modal'
+import { OrderCard } from '~/components/OrderCard'
+import { ProductSwimlane } from '~/components/ProductSwimlane'
+import { PageHeader, Text } from '~/components/Text'
+import { CACHE_NONE, routeHeaders } from '~/data/cache'
+import { usePrefixPathWithLocale } from '~/lib/utils'
 
 export const headers = routeHeaders
 

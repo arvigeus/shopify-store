@@ -1,8 +1,8 @@
 import { flattenConnection, Image } from '@shopify/hydrogen'
 
-import type { OrderCardFragment } from 'customer-accountapi.generated'
-import { Heading, Text } from '~/components/Text'
+import  { type OrderCardFragment } from 'customer-accountapi.generated'
 import { Link } from '~/components/Link'
+import { Heading, Text } from '~/components/Text'
 import { statusMessage } from '~/lib/utils'
 
 export function OrderCard({ order }: { order: OrderCardFragment }) {

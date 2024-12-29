@@ -1,6 +1,3 @@
-import clsx from 'clsx'
-import { useRef } from 'react'
-import useScroll from 'react-use/esm/useScroll'
 import {
 	flattenConnection,
 	CartForm,
@@ -10,18 +7,21 @@ import {
 	OptimisticInput,
 	type CartReturn,
 } from '@shopify/hydrogen'
-import type {
-	Cart as CartType,
-	CartCost,
-	CartLine,
-	CartLineUpdateInput,
+import  {
+	type Cart as CartType,
+	type CartCost,
+	type CartLine,
+	type CartLineUpdateInput,
 } from '@shopify/hydrogen/storefront-api-types'
+import clsx from 'clsx'
+import { useRef } from 'react'
+import useScroll from 'react-use/esm/useScroll'
 
 import { Button } from '~/components/Button'
-import { Text, Heading } from '~/components/Text'
-import { Link } from '~/components/Link'
-import { IconRemove } from '~/components/Icon'
 import { FeaturedProducts } from '~/components/FeaturedProducts'
+import { IconRemove } from '~/components/Icon'
+import { Link } from '~/components/Link'
+import { Text, Heading } from '~/components/Text'
 import { getInputStyleClasses } from '~/lib/utils'
 
 type Layouts = 'page' | 'drawer'

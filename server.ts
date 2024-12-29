@@ -1,10 +1,5 @@
 // @ts-ignore
 // Virtual entry point for the app
-import * as remixBuild from 'virtual:remix/server-build'
-import {
-	createRequestHandler,
-	getStorefrontHeaders,
-} from '@shopify/remix-oxygen'
 import {
 	cartGetIdDefault,
 	cartSetIdDefault,
@@ -13,6 +8,11 @@ import {
 	storefrontRedirect,
 	createCustomerAccountClient,
 } from '@shopify/hydrogen'
+import {
+	createRequestHandler,
+	getStorefrontHeaders,
+} from '@shopify/remix-oxygen'
+import * as remixBuild from 'virtual:remix/server-build'
 
 import { AppSession } from '~/lib/session.server'
 import { getLocaleFromRequest } from '~/lib/utils'

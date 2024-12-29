@@ -1,21 +1,18 @@
-import type { SyntheticEvent } from 'react'
-import { useMemo, useState } from 'react'
 import { Menu, Disclosure } from '@headlessui/react'
-import type { Location } from '@remix-run/react'
-import {
+import  { type Location,
 	Link,
 	useLocation,
 	useSearchParams,
-	useNavigate,
-} from '@remix-run/react'
-import useDebounce from 'react-use/esm/useDebounce'
-import type {
-	Filter,
-	ProductFilter,
+	useNavigate } from '@remix-run/react'
+import  {
+	type Filter,
+	type ProductFilter,
 } from '@shopify/hydrogen/storefront-api-types'
+import { useMemo, useState, type SyntheticEvent  } from 'react'
+import useDebounce from 'react-use/esm/useDebounce'
 
-import { Heading, Text } from '~/components/Text'
 import { IconFilters, IconCaret, IconXMark } from '~/components/Icon'
+import { Heading, Text } from '~/components/Text'
 
 export type AppliedFilter = {
 	label: string

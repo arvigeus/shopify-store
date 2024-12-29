@@ -1,6 +1,6 @@
-import type { HomepageFeaturedProductsQuery } from 'storefrontapi.generated'
-import { Section } from '~/components/Text'
+import  { type HomepageFeaturedProductsQuery } from 'storefrontapi.generated'
 import { ProductCard } from '~/components/ProductCard'
+import { Section } from '~/components/Text'
 
 const mockProducts = {
 	nodes: new Array(12).fill(''),

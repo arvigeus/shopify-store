@@ -1,31 +1,31 @@
-import {
-	defer,
-	type MetaArgs,
-	type LoaderFunctionArgs,
-} from '@shopify/remix-oxygen'
 import { Await, Form, useLoaderData } from '@remix-run/react'
-import { Suspense } from 'react'
 import {
 	Pagination,
 	getPaginationVariables,
 	Analytics,
 	getSeoMeta,
 } from '@shopify/hydrogen'
-
-import { Heading, PageHeader, Section, Text } from '~/components/Text'
-import { Input } from '~/components/Input'
-import { Grid } from '~/components/Grid'
-import { ProductCard } from '~/components/ProductCard'
-import { ProductSwimlane } from '~/components/ProductSwimlane'
-import { FeaturedCollections } from '~/components/FeaturedCollections'
-import { PRODUCT_CARD_FRAGMENT } from '~/data/fragments'
-import { getImageLoadingPriority, PAGINATION_SIZE } from '~/lib/const'
-import { seoPayload } from '~/lib/seo.server'
+import {
+	defer,
+	type MetaArgs,
+	type LoaderFunctionArgs,
+} from '@shopify/remix-oxygen'
+import { Suspense } from 'react'
 
 import {
 	getFeaturedData,
 	type FeaturedData,
 } from './($locale).featured-products'
+import { FeaturedCollections } from '~/components/FeaturedCollections'
+import { Grid } from '~/components/Grid'
+import { Input } from '~/components/Input'
+import { ProductCard } from '~/components/ProductCard'
+import { ProductSwimlane } from '~/components/ProductSwimlane'
+import { Heading, PageHeader, Section, Text } from '~/components/Text'
+import { PRODUCT_CARD_FRAGMENT } from '~/data/fragments'
+import { getImageLoadingPriority, PAGINATION_SIZE } from '~/lib/const'
+import { seoPayload } from '~/lib/seo.server'
+
 
 export async function loader({
 	request,

@@ -1,10 +1,10 @@
 import { Form } from '@remix-run/react'
-import type { CustomerAddress } from '@shopify/hydrogen/customer-account-api-types'
+import  { type CustomerAddress } from '@shopify/hydrogen/customer-account-api-types'
 
-import type { CustomerDetailsFragment } from 'customer-accountapi.generated'
+import  { type CustomerDetailsFragment } from 'customer-accountapi.generated'
 import { Button } from '~/components/Button'
-import { Text } from '~/components/Text'
 import { Link } from '~/components/Link'
+import { Text } from '~/components/Text'
 
 export function AccountAddressBook({
 	customer,

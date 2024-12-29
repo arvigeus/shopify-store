@@ -1,7 +1,6 @@
 import { useLocation, useRouteLoaderData } from '@remix-run/react'
 import { type FulfillmentStatus } from '@shopify/hydrogen/customer-account-api-types'
 import { type MoneyV2 } from '@shopify/hydrogen/storefront-api-types'
-import { useMemo } from 'react'
 import {
 	type ChildMenuItemFragment,
 	type MenuFragment,

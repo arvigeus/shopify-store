@@ -1,17 +1,14 @@
-import { useParams, Form, Await, useRouteLoaderData } from '@remix-run/react'
-import useWindowScroll from 'react-use/esm/useWindowScroll'
 import { Disclosure } from '@headlessui/react'
-import { Suspense, useEffect, useMemo } from 'react'
+import { useParams, Form, Await, useRouteLoaderData } from '@remix-run/react'
 import { CartForm } from '@shopify/hydrogen'
+import { Suspense, useEffect, useMemo } from 'react'
+import useWindowScroll from 'react-use/esm/useWindowScroll'
 
 import { type LayoutQuery } from 'storefrontapi.generated'
-import { Text, Heading, Section } from '~/components/Text'
-import { Link } from '~/components/Link'
 import { Cart } from '~/components/Cart'
 import { CartLoading } from '~/components/CartLoading'
-import { Input } from '~/components/Input'
-import { Drawer, useDrawer } from '~/components/Drawer'
 import { CountrySelector } from '~/components/CountrySelector'
+import { Drawer, useDrawer } from '~/components/Drawer'
 import {
 	IconMenu,
 	IconCaret,
@@ -20,14 +17,17 @@ import {
 	IconBag,
 	IconSearch,
 } from '~/components/Icon'
+import { Input } from '~/components/Input'
+import { Link } from '~/components/Link'
+import { Text, Heading, Section } from '~/components/Text'
+import { useCartFetchers } from '~/hooks/useCartFetchers'
+import { useIsHydrated } from '~/hooks/useIsHydrated'
 import {
 	type EnhancedMenu,
 	type ChildEnhancedMenuItem,
 	useIsHomePath,
 } from '~/lib/utils'
-import { useIsHydrated } from '~/hooks/useIsHydrated'
-import { useCartFetchers } from '~/hooks/useCartFetchers'
-import type { RootLoader } from '~/root'
+import  { type RootLoader } from '~/root'
 
 type LayoutProps = {
 	children: React.ReactNode
