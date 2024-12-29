@@ -14,7 +14,6 @@ import  {
 	type OrderCardFragment,
 } from 'customer-accountapi.generated'
 import { Suspense } from 'react'
-import { CUSTOMER_DETAILS_QUERY } from '~/graphql/customer-account/CustomerDetailsQuery'
 
 import { doLogout } from './($locale).account_.logout'
 import {
@@ -30,6 +29,7 @@ import { OrderCard } from '~/components/OrderCard'
 import { ProductSwimlane } from '~/components/ProductSwimlane'
 import { PageHeader, Text } from '~/components/Text'
 import { CACHE_NONE, routeHeaders } from '~/data/cache'
+import { CUSTOMER_DETAILS_QUERY } from '~/graphql/customer-account/CustomerDetailsQuery'
 import { usePrefixPathWithLocale } from '~/lib/utils'
 
 export const headers = routeHeaders
