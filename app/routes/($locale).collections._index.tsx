@@ -1,24 +1,20 @@
-import {
-	json,
-	type MetaArgs,
-	type LoaderFunctionArgs,
-} from '@shopify/remix-oxygen'
 import { useLoaderData } from '@remix-run/react'
-import type { Collection } from '@shopify/hydrogen/storefront-api-types'
 import {
 	Image,
 	Pagination,
 	getPaginationVariables,
 	getSeoMeta,
 } from '@shopify/hydrogen'
+import { type Collection } from '@shopify/hydrogen/storefront-api-types'
+import { type MetaArgs, type LoaderFunctionArgs } from '@shopify/remix-oxygen'
 
-import { Grid } from '~/components/Grid'
-import { Heading, PageHeader, Section } from '~/components/Text'
-import { Link } from '~/components/Link'
 import { Button } from '~/components/Button'
+import { Grid } from '~/components/Grid'
+import { Link } from '~/components/Link'
+import { Heading, PageHeader, Section } from '~/components/Text'
+import { routeHeaders } from '~/data/cache'
 import { getImageLoadingPriority } from '~/lib/const'
 import { seoPayload } from '~/lib/seo.server'
-import { routeHeaders } from '~/data/cache'
 
 const PAGINATION_SIZE = 4
 
@@ -42,7 +38,7 @@ export const loader = async ({
 		url: request.url,
 	})
 
-	return json({ collections, seo })
+	return { collections, seo }
 }
 
 export const meta = ({ matches }: MetaArgs<typeof loader>) => {

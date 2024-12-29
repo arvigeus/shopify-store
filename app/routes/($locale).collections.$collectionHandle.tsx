@@ -1,16 +1,4 @@
-import { useEffect } from 'react'
-import {
-	json,
-	type MetaArgs,
-	type LoaderFunctionArgs,
-} from '@shopify/remix-oxygen'
 import { useLoaderData, useNavigate } from '@remix-run/react'
-import { useInView } from 'react-intersection-observer'
-import type {
-	Filter,
-	ProductCollectionSortKeys,
-	ProductFilter,
-} from '@shopify/hydrogen/storefront-api-types'
 import {
 	Pagination,
 	flattenConnection,
@@ -18,18 +6,29 @@ import {
 	Analytics,
 	getSeoMeta,
 } from '@shopify/hydrogen'
+import {
+	type Filter,
+	type ProductCollectionSortKeys,
+	type ProductFilter,
+} from '@shopify/hydrogen/storefront-api-types'
+import { type MetaArgs, type LoaderFunctionArgs } from '@shopify/remix-oxygen'
+import { useEffect } from 'react'
+import { useInView } from 'react-intersection-observer'
 import invariant from 'tiny-invariant'
 
-import { PageHeader, Section, Text } from '~/components/Text'
-import { Grid } from '~/components/Grid'
 import { Button } from '~/components/Button'
+import { Grid } from '~/components/Grid'
 import { ProductCard } from '~/components/ProductCard'
-import { SortFilter, type SortParam } from '~/components/SortFilter'
-import { PRODUCT_CARD_FRAGMENT } from '~/data/fragments'
+import {
+	SortFilter,
+	type SortParam,
+	FILTER_URL_PREFIX,
+} from '~/components/SortFilter'
+import { PageHeader, Section, Text } from '~/components/Text'
 import { routeHeaders } from '~/data/cache'
-import { seoPayload } from '~/lib/seo.server'
-import { FILTER_URL_PREFIX } from '~/components/SortFilter'
+import { PRODUCT_CARD_FRAGMENT } from '~/data/fragments'
 import { getImageLoadingPriority } from '~/lib/const'
+import { seoPayload } from '~/lib/seo.server'
 import { parseAsCurrency } from '~/lib/utils'
 
 export const headers = routeHeaders
@@ -129,12 +128,12 @@ export async function loader({ params, request, context }: LoaderFunctionArgs) {
 		})
 		.filter((filter): filter is NonNullable<typeof filter> => filter !== null)
 
-	return json({
+	return {
 		collection,
 		appliedFilters,
 		collections: flattenConnection(collections),
 		seo,
-	})
+	}
 }
 
 export const meta = ({ matches }: MetaArgs<typeof loader>) => {

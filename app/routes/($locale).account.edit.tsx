@@ -1,22 +1,21 @@
-import { json, redirect, type ActionFunction } from '@shopify/remix-oxygen'
 import {
 	useActionData,
 	Form,
 	useOutletContext,
 	useNavigation,
 } from '@remix-run/react'
-import type {
-	Customer,
-	CustomerUpdateInput,
+import {
+	type Customer,
+	type CustomerUpdateInput,
 } from '@shopify/hydrogen/customer-account-api-types'
+import { redirect, type ActionFunction } from '@shopify/remix-oxygen'
 import invariant from 'tiny-invariant'
 
+import { doLogout } from './($locale).account_.logout'
 import { Button } from '~/components/Button'
 import { Text } from '~/components/Text'
-import { getInputStyleClasses } from '~/lib/utils'
 import { CUSTOMER_UPDATE_MUTATION } from '~/graphql/customer-account/CustomerUpdateMutation'
-
-import { doLogout } from './($locale).account_.logout'
+import { getInputStyleClasses } from '~/lib/utils'
 
 export interface AccountOutletContext {
 	customer: Customer
@@ -82,7 +81,7 @@ export const action: ActionFunction = async ({ request, context, params }) => {
 
 		return redirect(params?.locale ? `${params.locale}/account` : '/account')
 	} catch (error: any) {
-		return json(
+		return Response.json(
 			{ formError: error?.message },
 			{
 				status: 400,

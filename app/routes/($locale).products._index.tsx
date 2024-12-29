@@ -1,23 +1,19 @@
-import {
-	json,
-	type MetaArgs,
-	type LoaderFunctionArgs,
-} from '@shopify/remix-oxygen'
 import { useLoaderData } from '@remix-run/react'
-import invariant from 'tiny-invariant'
 import {
 	Pagination,
 	getPaginationVariables,
 	getSeoMeta,
 } from '@shopify/hydrogen'
+import { type MetaArgs, type LoaderFunctionArgs } from '@shopify/remix-oxygen'
+import invariant from 'tiny-invariant'
 
-import { PageHeader, Section } from '~/components/Text'
-import { ProductCard } from '~/components/ProductCard'
 import { Grid } from '~/components/Grid'
+import { ProductCard } from '~/components/ProductCard'
+import { PageHeader, Section } from '~/components/Text'
+import { routeHeaders } from '~/data/cache'
 import { PRODUCT_CARD_FRAGMENT } from '~/data/fragments'
 import { getImageLoadingPriority } from '~/lib/const'
 import { seoPayload } from '~/lib/seo.server'
-import { routeHeaders } from '~/data/cache'
 
 const PAGE_BY = 8
 
@@ -57,10 +53,10 @@ export async function loader({
 		},
 	})
 
-	return json({
+	return {
 		products: data.products,
 		seo,
-	})
+	}
 }
 
 export const meta = ({ matches }: MetaArgs<typeof loader>) => {

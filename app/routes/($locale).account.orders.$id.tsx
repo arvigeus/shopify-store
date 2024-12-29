@@ -1,14 +1,14 @@
-import clsx from 'clsx'
-import { json, redirect, type LoaderFunctionArgs } from '@shopify/remix-oxygen'
 import { useLoaderData, type MetaFunction } from '@remix-run/react'
 import { Money, Image, flattenConnection } from '@shopify/hydrogen'
-import type { FulfillmentStatus } from '@shopify/hydrogen/customer-account-api-types'
+import { type FulfillmentStatus } from '@shopify/hydrogen/customer-account-api-types'
+import { redirect, type LoaderFunctionArgs } from '@shopify/remix-oxygen'
+import clsx from 'clsx'
 
-import type { OrderFragment } from 'customer-accountapi.generated'
-import { statusMessage } from '~/lib/utils'
+import { type OrderFragment } from 'customer-accountapi.generated'
 import { Link } from '~/components/Link'
 import { Heading, PageHeader, Text } from '~/components/Text'
 import { CUSTOMER_ORDER_QUERY } from '~/graphql/customer-account/CustomerOrderQuery'
+import { statusMessage } from '~/lib/utils'
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	return [{ title: `Order ${data?.order?.name}` }]
@@ -58,13 +58,13 @@ export async function loader({ request, context, params }: LoaderFunctionArgs) {
 				? fulfillments[0].status
 				: ('OPEN' as FulfillmentStatus)
 
-		return json({
+		return {
 			order,
 			lineItems,
 			discountValue,
 			discountPercentage,
 			fulfillmentStatus,
-		})
+		}
 	} catch (error) {
 		throw new Response(error instanceof Error ? error.message : undefined, {
 			status: 404,

@@ -1,17 +1,13 @@
-import {
-	json,
-	type MetaArgs,
-	type LoaderFunctionArgs,
-} from '@shopify/remix-oxygen'
 import { useLoaderData } from '@remix-run/react'
-import invariant from 'tiny-invariant'
 import { getSeoMeta } from '@shopify/hydrogen'
+import { type MetaArgs, type LoaderFunctionArgs } from '@shopify/remix-oxygen'
+import invariant from 'tiny-invariant'
 
-import { PageHeader, Section, Heading } from '~/components/Text'
 import { Link } from '~/components/Link'
+import { PageHeader, Section, Heading } from '~/components/Text'
 import { routeHeaders } from '~/data/cache'
 import { seoPayload } from '~/lib/seo.server'
-import type { NonNullableFields } from '~/lib/type'
+import { type NonNullableFields } from '~/lib/type'
 
 export const headers = routeHeaders
 
@@ -32,10 +28,10 @@ export async function loader({
 
 	const seo = seoPayload.policies({ policies, url: request.url })
 
-	return json({
+	return {
 		policies,
 		seo,
-	})
+	}
 }
 
 export const meta = ({ matches }: MetaArgs<typeof loader>) => {

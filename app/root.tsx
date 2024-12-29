@@ -1,11 +1,4 @@
 import {
-	defer,
-	type LinksFunction,
-	type LoaderFunctionArgs,
-	type AppLoadContext,
-	type MetaArgs,
-} from '@shopify/remix-oxygen'
-import {
 	isRouteErrorResponse,
 	Links,
 	Meta,
@@ -23,16 +16,22 @@ import {
 	getSeoMeta,
 	type SeoConfig,
 } from '@shopify/hydrogen'
+import {
+	defer,
+	type LinksFunction,
+	type LoaderFunctionArgs,
+	type AppLoadContext,
+	type MetaArgs,
+} from '@shopify/remix-oxygen'
 import invariant from 'tiny-invariant'
 
-import { PageLayout } from '~/components/PageLayout'
+import { DEFAULT_LOCALE, parseMenu } from './lib/utils'
+import favicon from '~/assets/favicon.svg'
 import { GenericError } from '~/components/GenericError'
 import { NotFound } from '~/components/NotFound'
-import favicon from '~/assets/favicon.svg'
+import { PageLayout } from '~/components/PageLayout'
 import { seoPayload } from '~/lib/seo.server'
 import styles from '~/styles/app.css?url'
-
-import { DEFAULT_LOCALE, parseMenu } from './lib/utils'
 
 export type RootLoader = typeof loader
 

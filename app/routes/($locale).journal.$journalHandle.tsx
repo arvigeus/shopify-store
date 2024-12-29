@@ -1,18 +1,16 @@
+import { useLoaderData } from '@remix-run/react'
+import { getSeoMeta, Image } from '@shopify/hydrogen'
 import {
-	json,
 	type MetaArgs,
 	type LinksFunction,
 	type LoaderFunctionArgs,
 } from '@shopify/remix-oxygen'
-import { useLoaderData } from '@remix-run/react'
-import { getSeoMeta, Image } from '@shopify/hydrogen'
 import invariant from 'tiny-invariant'
 
-import { PageHeader, Section } from '~/components/Text'
-import { seoPayload } from '~/lib/seo.server'
-import { routeHeaders } from '~/data/cache'
-
 import styles from '../styles/custom-font.css?url'
+import { PageHeader, Section } from '~/components/Text'
+import { routeHeaders } from '~/data/cache'
+import { seoPayload } from '~/lib/seo.server'
 
 const BLOG_HANDLE = 'journal'
 
@@ -49,7 +47,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
 
 	const seo = seoPayload.article({ article, url: request.url })
 
-	return json({ article, formattedDate, seo })
+	return { article, formattedDate, seo }
 }
 
 export const meta = ({ matches }: MetaArgs<typeof loader>) => {

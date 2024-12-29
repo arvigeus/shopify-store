@@ -1,19 +1,18 @@
 import { Await, useRouteLoaderData } from '@remix-run/react'
-import invariant from 'tiny-invariant'
-import {
-	type LoaderFunctionArgs,
-	type ActionFunctionArgs,
-	json,
-} from '@shopify/remix-oxygen'
 import {
 	CartForm,
 	type CartQueryDataReturn,
 	Analytics,
 } from '@shopify/hydrogen'
+import {
+	type LoaderFunctionArgs,
+	type ActionFunctionArgs,
+} from '@shopify/remix-oxygen'
+import invariant from 'tiny-invariant'
 
-import { isLocalPath } from '~/lib/utils'
 import { Cart } from '~/components/Cart'
-import type { RootLoader } from '~/root'
+import { isLocalPath } from '~/lib/utils'
+import { type RootLoader } from '~/root'
 
 export async function action({ request, context }: ActionFunctionArgs) {
 	const { cart } = context
@@ -62,7 +61,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 	 * The Cart ID may change after each mutation. We need to update it each time in the session.
 	 */
 	const cartId = result.cart.id
-	const headers = cart.setCartId(result.cart.id)
+	const headers = cart.setCartId(cartId)
 
 	const redirectTo = formData.get('redirectTo') ?? null
 	if (typeof redirectTo === 'string' && isLocalPath(redirectTo)) {
@@ -72,7 +71,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
 	const { cart: cartResult, errors, userErrors } = result
 
-	return json(
+	return Response.json(
 		{
 			cart: cartResult,
 			userErrors,
@@ -84,7 +83,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
 export async function loader({ context }: LoaderFunctionArgs) {
 	const { cart } = context
-	return json(await cart.get())
+	return await cart.get()
 }
 
 export default function CartRoute() {

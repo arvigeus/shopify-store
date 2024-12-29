@@ -1,10 +1,4 @@
 import {
-	json,
-	redirect,
-	type ActionFunction,
-	type AppLoadContext,
-} from '@shopify/remix-oxygen'
-import {
 	Form,
 	useActionData,
 	useOutletContext,
@@ -12,20 +6,20 @@ import {
 	useNavigation,
 } from '@remix-run/react'
 import { flattenConnection } from '@shopify/hydrogen'
-import type { CustomerAddressInput } from '@shopify/hydrogen/customer-account-api-types'
+import { type CustomerAddressInput } from '@shopify/hydrogen/customer-account-api-types'
+import { redirect, type ActionFunction } from '@shopify/remix-oxygen'
 import invariant from 'tiny-invariant'
 
+import { type AccountOutletContext } from './($locale).account.edit'
+import { doLogout } from './($locale).account_.logout'
 import { Button } from '~/components/Button'
 import { Text } from '~/components/Text'
-import { getInputStyleClasses } from '~/lib/utils'
 import {
 	UPDATE_ADDRESS_MUTATION,
 	DELETE_ADDRESS_MUTATION,
 	CREATE_ADDRESS_MUTATION,
 } from '~/graphql/customer-account/CustomerAddressMutations'
-
-import { doLogout } from './($locale).account_.logout'
-import type { AccountOutletContext } from './($locale).account.edit'
+import { getInputStyleClasses } from '~/lib/utils'
 
 interface ActionData {
 	formError?: string
@@ -64,7 +58,7 @@ export const action: ActionFunction = async ({ request, context, params }) => {
 
 			return redirect(params?.locale ? `${params?.locale}/account` : '/account')
 		} catch (error: any) {
-			return json(
+			return Response.json(
 				{ formError: error.message },
 				{
 					status: 400,
@@ -120,7 +114,7 @@ export const action: ActionFunction = async ({ request, context, params }) => {
 
 			return redirect(params?.locale ? `${params?.locale}/account` : '/account')
 		} catch (error: any) {
-			return json(
+			return Response.json(
 				{ formError: error.message },
 				{
 					status: 400,
@@ -149,7 +143,7 @@ export const action: ActionFunction = async ({ request, context, params }) => {
 
 			return redirect(params?.locale ? `${params?.locale}/account` : '/account')
 		} catch (error: any) {
-			return json(
+			return Response.json(
 				{ formError: error.message },
 				{
 					status: 400,
