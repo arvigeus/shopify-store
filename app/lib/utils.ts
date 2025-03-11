@@ -155,7 +155,6 @@ function parseItem(primaryDomain: string, env: Env, customPrefixes = {}) {
 		| EnhancedMenu['items'][number]['items'][0]
 		| null {
 		if (!item?.url || !item?.type) {
-			 
 			console.warn('Invalid menu item.  Must include a url and type.')
 			return null
 		}
@@ -207,7 +206,6 @@ export function parseMenu(
 	customPrefixes = {},
 ): EnhancedMenu | null {
 	if (!menu?.items) {
-		 
 		console.warn('Invalid menu passed to parseMenu')
 		return null
 	}

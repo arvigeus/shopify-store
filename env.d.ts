@@ -2,13 +2,13 @@
 /// <reference types="@shopify/remix-oxygen" />
 /// <reference types="@shopify/oxygen-workers-types" />
 
-import  {
+import {
 	type WithCache,
 	type HydrogenCart,
 	type HydrogenSessionData,
 } from '@shopify/hydrogen'
-import  { type AppSession } from '~/lib/session.server'
-import  { type Storefront, type CustomerAccount } from '~/lib/type'
+import { type AppSession } from '~/lib/session.server'
+import { type Storefront, type CustomerAccount } from '~/lib/type'
 
 declare global {
 	/**

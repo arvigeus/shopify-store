@@ -1,6 +1,6 @@
 import { useFetcher, useLocation, useRouteLoaderData } from '@remix-run/react'
 import { CartForm } from '@shopify/hydrogen'
-import  { type CartBuyerIdentityInput } from '@shopify/hydrogen/storefront-api-types'
+import { type CartBuyerIdentityInput } from '@shopify/hydrogen/storefront-api-types'
 import clsx from 'clsx'
 import { useCallback, useEffect, useRef } from 'react'
 import { useInView } from 'react-intersection-observer'
@@ -8,9 +8,9 @@ import { useInView } from 'react-intersection-observer'
 import { Button } from '~/components/Button'
 import { IconCheck } from '~/components/Icon'
 import { Heading } from '~/components/Text'
-import  { type Localizations, type Locale } from '~/lib/type'
+import { type Localizations, type Locale } from '~/lib/type'
 import { DEFAULT_LOCALE } from '~/lib/utils'
-import  { type RootLoader } from '~/root'
+import { type RootLoader } from '~/root'
 
 export function CountrySelector() {
 	const fetcher = useFetcher()

@@ -1,4 +1,4 @@
-import  { type HomepageFeaturedProductsQuery } from 'storefrontapi.generated'
+import { type HomepageFeaturedProductsQuery } from 'storefrontapi.generated'
 import { ProductCard } from '~/components/ProductCard'
 import { Section } from '~/components/Text'
 

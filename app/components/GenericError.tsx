@@ -13,7 +13,7 @@ export function GenericError({
 	// TODO hide error in prod?
 	if (error) {
 		description += `\n${error.message}`
-		 
+
 		console.error(error)
 	}
 

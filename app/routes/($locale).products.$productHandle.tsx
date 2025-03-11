@@ -17,7 +17,7 @@ import {
 import clsx from 'clsx'
 import { useRef, Suspense } from 'react'
 
-import  {
+import {
 	type ProductQuery,
 	type ProductVariantFragmentFragment,
 } from 'storefrontapi.generated'
@@ -33,7 +33,7 @@ import { Heading, Section, Text } from '~/components/Text'
 import { routeHeaders } from '~/data/cache'
 import { MEDIA_FRAGMENT, PRODUCT_CARD_FRAGMENT } from '~/data/fragments'
 import { seoPayload } from '~/lib/seo.server'
-import  { type Storefront } from '~/lib/type'
+import { type Storefront } from '~/lib/type'
 import { getExcerpt } from '~/lib/utils'
 
 export const headers = routeHeaders

@@ -1,5 +1,5 @@
 import { type SeoConfig } from '@shopify/hydrogen'
-import  {
+import {
 	type Article,
 	type Blog,
 	type Collection,
@@ -9,7 +9,7 @@ import  {
 	type ShopPolicy,
 	type Image,
 } from '@shopify/hydrogen/storefront-api-types'
-import  {
+import {
 	type Article as SeoArticle,
 	type BreadcrumbList,
 	type Blog as SeoBlog,
@@ -20,7 +20,7 @@ import  {
 	type WebPage,
 } from 'schema-dts'
 
-import  { type ShopFragment } from 'storefrontapi.generated'
+import { type ShopFragment } from 'storefrontapi.generated'
 
 function root({
 	shop,

@@ -1,8 +1,11 @@
 import { flattenConnection, Image, Money, useMoney } from '@shopify/hydrogen'
-import  { type MoneyV2, type Product } from '@shopify/hydrogen/storefront-api-types'
+import {
+	type MoneyV2,
+	type Product,
+} from '@shopify/hydrogen/storefront-api-types'
 import clsx from 'clsx'
 
-import  { type ProductCardFragment } from 'storefrontapi.generated'
+import { type ProductCardFragment } from 'storefrontapi.generated'
 import { AddToCartButton } from '~/components/AddToCartButton'
 import { Button } from '~/components/Button'
 import { Link } from '~/components/Link'

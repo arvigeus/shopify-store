@@ -102,7 +102,6 @@ export async function loader({ params, request, context }: LoaderFunctionArgs) {
 				)
 			})
 			if (!foundValue) {
-				 
 				console.error('Could not find filter value for filter', filter)
 				return null
 			}

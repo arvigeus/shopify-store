@@ -1,14 +1,16 @@
 import { Menu, Disclosure } from '@headlessui/react'
-import  { type Location,
+import {
+	type Location,
 	Link,
 	useLocation,
 	useSearchParams,
-	useNavigate } from '@remix-run/react'
-import  {
+	useNavigate,
+} from '@remix-run/react'
+import {
 	type Filter,
 	type ProductFilter,
 } from '@shopify/hydrogen/storefront-api-types'
-import { useMemo, useState, type SyntheticEvent  } from 'react'
+import { useMemo, useState, type SyntheticEvent } from 'react'
 import useDebounce from 'react-use/esm/useDebounce'
 
 import { IconFilters, IconCaret, IconXMark } from '~/components/Icon'

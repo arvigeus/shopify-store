@@ -9,7 +9,7 @@ import {
 import { flattenConnection } from '@shopify/hydrogen'
 import { defer, type LoaderFunctionArgs } from '@shopify/remix-oxygen'
 
-import  {
+import {
 	type CustomerDetailsFragment,
 	type OrderCardFragment,
 } from 'customer-accountapi.generated'

@@ -26,7 +26,6 @@ import { PRODUCT_CARD_FRAGMENT } from '~/data/fragments'
 import { getImageLoadingPriority, PAGINATION_SIZE } from '~/lib/const'
 import { seoPayload } from '~/lib/seo.server'
 
-
 export async function loader({
 	request,
 	context: { storefront },

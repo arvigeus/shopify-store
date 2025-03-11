@@ -27,7 +27,7 @@ import {
 	type ChildEnhancedMenuItem,
 	useIsHomePath,
 } from '~/lib/utils'
-import  { type RootLoader } from '~/root'
+import { type RootLoader } from '~/root'
 
 type LayoutProps = {
 	children: React.ReactNode

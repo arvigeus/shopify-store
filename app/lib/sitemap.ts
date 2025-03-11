@@ -1,8 +1,8 @@
-import  {
+import {
 	type CountryCode,
 	type LanguageCode,
 } from '@shopify/hydrogen/storefront-api-types'
-import  { type LoaderFunctionArgs } from '@shopify/remix-oxygen'
+import { type LoaderFunctionArgs } from '@shopify/remix-oxygen'
 
 const SITEMAP_INDEX_PREFIX = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`

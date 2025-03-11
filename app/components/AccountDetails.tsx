@@ -1,4 +1,4 @@
-import  { type CustomerDetailsFragment } from 'customer-accountapi.generated'
+import { type CustomerDetailsFragment } from 'customer-accountapi.generated'
 import { Link } from '~/components/Link'
 
 export function AccountDetails({
