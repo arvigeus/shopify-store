@@ -1,4 +1,4 @@
-import { Await, useRouteLoaderData } from '@remix-run/react'
+import { useLoaderData } from '@remix-run/react'
 import {
 	CartForm,
 	type CartQueryDataReturn,
@@ -12,7 +12,6 @@ import invariant from 'tiny-invariant'
 
 import { Cart } from '~/components/Cart'
 import { isLocalPath } from '~/lib/utils'
-import { type RootLoader } from '~/root'
 
 export async function action({ request, context }: ActionFunctionArgs) {
 	const { cart } = context
@@ -60,8 +59,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 	/**
 	 * The Cart ID may change after each mutation. We need to update it each time in the session.
 	 */
-	const cartId = result.cart.id
-	const headers = cart.setCartId(cartId)
+	const headers = cart.setCartId(result.cart.id)
 
 	const redirectTo = formData.get('redirectTo') ?? null
 	if (typeof redirectTo === 'string' && isLocalPath(redirectTo)) {
@@ -87,18 +85,13 @@ export async function loader({ context }: LoaderFunctionArgs) {
 }
 
 export default function CartRoute() {
-	const rootData = useRouteLoaderData<RootLoader>('root')
-	if (!rootData) return null
+	const cart = useLoaderData<typeof loader>()
 
-	// @todo: finish on a separate PR
 	return (
-		<>
-			<div className="grid w-full justify-items-start gap-8 p-6 py-8 md:p-8 lg:p-12">
-				<Await resolve={rootData?.cart}>
-					{(cart) => <Cart layout="page" cart={cart} />}
-				</Await>
-			</div>
+		<div className="cart">
+			<h1>Cart</h1>
+			<Cart layout="page" cart={cart} />
 			<Analytics.CartView />
-		</>
+		</div>
 	)
 }

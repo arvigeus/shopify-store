@@ -1,26 +1,30 @@
 import { Disclosure, Listbox } from '@headlessui/react'
-import { useLoaderData, Await, useNavigate } from '@remix-run/react'
+import { useLoaderData, Await } from '@remix-run/react'
 import {
 	getSeoMeta,
 	Money,
 	ShopPayButton,
-	VariantSelector,
 	getSelectedProductOptions,
 	Analytics,
+	useOptimisticVariant,
+	getAdjacentAndFirstAvailableVariants,
+	useSelectedOptionInUrlParam,
+	getProductOptions,
+	type MappedProductOptions,
 } from '@shopify/hydrogen'
+import {
+	type Maybe,
+	type ProductOptionValueSwatch,
+} from '@shopify/hydrogen/storefront-api-types'
 import {
 	defer,
 	type MetaArgs,
-	redirect,
 	type LoaderFunctionArgs,
 } from '@shopify/remix-oxygen'
 import clsx from 'clsx'
 import { useRef, Suspense } from 'react'
 
-import {
-	type ProductQuery,
-	type ProductVariantFragmentFragment,
-} from 'storefrontapi.generated'
+import { type ProductFragment } from 'storefrontapi.generated'
 import invariant from 'tiny-invariant'
 import { AddToCartButton } from '~/components/AddToCartButton'
 import { Button } from '~/components/Button'
@@ -81,25 +85,19 @@ async function loadCriticalData({
 		throw new Response('product', { status: 404 })
 	}
 
-	if (!product.selectedVariant) {
-		throw redirectToFirstVariant({ product, request })
-	}
-
 	const recommended = getRecommendedProducts(context.storefront, product.id)
-
-	// TODO: firstVariant is never used because we will always have a selectedVariant due to redirect
-	// Investigate if we can avoid the redirect for product pages with no search params for first variant
-	const firstVariant = product.variants.nodes[0]
-	const selectedVariant = product.selectedVariant ?? firstVariant
+	const selectedVariant = product.selectedOrFirstAvailableVariant ?? {}
+	const variants = getAdjacentAndFirstAvailableVariants(product)
 
 	const seo = seoPayload.product({
-		product,
+		product: { ...product, variants },
 		selectedVariant,
 		url: request.url,
 	})
 
 	return {
 		product,
+		variants,
 		shop,
 		storeDomain: shop.primaryDomain.url,
 		recommended,
@@ -112,55 +110,38 @@ async function loadCriticalData({
  * fetched after the initial page load. If it's unavailable, the page should still 200.
  * Make sure to not throw any errors here, as it will cause the page to 500.
  */
-function loadDeferredData({ params, context }: LoaderFunctionArgs) {
-	const { productHandle } = params
-	invariant(productHandle, 'Missing productHandle param, check route filename')
+function loadDeferredData(args: LoaderFunctionArgs) {
+	// Put any API calls that are not critical to be available on first page render
+	// For example: product reviews, product recommendations, social feeds.
 
-	// In order to show which variants are available in the UI, we need to query
-	// all of them. But there might be a *lot*, so instead separate the variants
-	// into it's own separate query that is deferred. So there's a brief moment
-	// where variant options might show as available when they're not, but after
-	// this deferred query resolves, the UI will update.
-	const variants = context.storefront.query(VARIANTS_QUERY, {
-		variables: {
-			handle: productHandle,
-			country: context.storefront.i18n.country,
-			language: context.storefront.i18n.language,
-		},
-	})
-
-	return { variants }
+	return {}
 }
 
 export const meta = ({ matches }: MetaArgs<typeof loader>) => {
 	return getSeoMeta(...matches.map((match) => (match.data as any).seo))
 }
 
-function redirectToFirstVariant({
-	product,
-	request,
-}: {
-	product: ProductQuery['product']
-	request: Request
-}) {
-	const url = new URL(request.url)
-	const searchParams = new URLSearchParams(url.search)
-
-	const firstVariant = product!.variants.nodes[0]
-	for (const option of firstVariant.selectedOptions) {
-		searchParams.set(option.name, option.value)
-	}
-
-	url.search = searchParams.toString()
-
-	return redirect(url.href.replace(url.origin, ''), 302)
-}
-
 export default function Product() {
-	const { product, shop, recommended, variants } =
+	const { product, shop, recommended, variants, storeDomain } =
 		useLoaderData<typeof loader>()
 	const { media, title, vendor, descriptionHtml } = product
 	const { shippingPolicy, refundPolicy } = shop
+
+	// Optimistically selects a variant with given available variant information
+	const selectedVariant = useOptimisticVariant(
+		product.selectedOrFirstAvailableVariant,
+		variants,
+	)
+
+	// Sets the search param to the selected variant without navigation
+	// only when no search params are set in the url
+	useSelectedOptionInUrlParam(selectedVariant.selectedOptions)
+
+	// Get the product options array
+	const productOptions = getProductOptions({
+		...product,
+		selectedOrFirstAvailableVariant: selectedVariant,
+	})
 
 	return (
 		<>
@@ -180,18 +161,11 @@ export default function Product() {
 									<Text className={'font-medium opacity-50'}>{vendor}</Text>
 								)}
 							</div>
-							<Suspense fallback={<ProductForm variants={[]} />}>
-								<Await
-									errorElement="There was a problem loading related products"
-									resolve={variants}
-								>
-									{(resp) => (
-										<ProductForm
-											variants={resp.product?.variants.nodes || []}
-										/>
-									)}
-								</Await>
-							</Suspense>
+							<ProductForm
+								productOptions={productOptions}
+								selectedVariant={selectedVariant}
+								storeDomain={storeDomain}
+							/>
 							<div className="grid gap-4 py-4">
 								{descriptionHtml && (
 									<ProductDetail
@@ -234,10 +208,10 @@ export default function Product() {
 						{
 							id: product.id,
 							title: product.title,
-							price: product.selectedVariant?.price.amount || '0',
+							price: selectedVariant?.price.amount || '0',
 							vendor: product.vendor,
-							variantId: product.selectedVariant?.id || '',
-							variantTitle: product.selectedVariant?.title || '',
+							variantId: selectedVariant?.id || '',
+							variantTitle: selectedVariant?.title || '',
 							quantity: 1,
 						},
 					],
@@ -248,20 +222,16 @@ export default function Product() {
 }
 
 export function ProductForm({
-	variants,
+	productOptions,
+	selectedVariant,
+	storeDomain,
 }: {
-	variants: ProductVariantFragmentFragment[]
+	productOptions: MappedProductOptions[]
+	selectedVariant: ProductFragment['selectedOrFirstAvailableVariant']
+	storeDomain: string
 }) {
-	const { product, storeDomain } = useLoaderData<typeof loader>()
-
 	const closeRef = useRef<HTMLButtonElement>(null)
 
-	/**
-	 * Likewise, we're defaulting to the first variant for purposes
-	 * of add to cart if there is none returned from the loader.
-	 * A developer can opt out of this, too.
-	 */
-	const selectedVariant = product.selectedVariant!
 	const isOutOfStock = !selectedVariant?.availableForSale
 
 	const isOnSale =
@@ -269,121 +239,122 @@ export function ProductForm({
 		selectedVariant?.compareAtPrice?.amount &&
 		selectedVariant?.price?.amount < selectedVariant?.compareAtPrice?.amount
 
-	const navigate = useNavigate()
-
 	return (
 		<div className="grid gap-10">
 			<div className="grid gap-4">
-				<VariantSelector
-					handle={product.handle}
-					options={product.options.filter(
-						(option) => option.optionValues.length > 1,
-					)}
-					variants={variants}
-				>
-					{({ option }) => {
-						return (
-							<div
-								key={option.name}
-								className="mb-4 flex flex-col flex-wrap gap-y-2 last:mb-0"
-							>
-								<Heading as="legend" size="lead" className="min-w-[4rem]">
-									{option.name}
-								</Heading>
-								<div className="flex flex-wrap items-baseline gap-4">
-									{option.values.length > 7 ? (
-										<div className="relative w-full">
-											<Listbox
-												onChange={(selectedOption) => {
-													const value = option.values.find(
-														(v) => v.value === selectedOption,
-													)
-
-													if (value) {
-														navigate(value.to)
-													}
-												}}
-											>
-												{({ open }) => (
-													<>
-														<Listbox.Button
-															ref={closeRef}
-															className={clsx(
-																'flex w-full items-center justify-between border border-primary px-4 py-3',
-																open
-																	? 'rounded-b md:rounded-b-none md:rounded-t'
-																	: 'rounded',
-															)}
-														>
-															<span>{option.value}</span>
-															<IconCaret direction={open ? 'up' : 'down'} />
-														</Listbox.Button>
-														<Listbox.Options
-															className={clsx(
-																'absolute bottom-12 z-30 grid h-48 w-full overflow-y-scroll rounded-t border border-primary bg-contrast px-2 py-2 transition-[max-height] duration-150 sm:bottom-auto md:rounded-b md:rounded-t-none md:border-b md:border-t-0',
-																open ? 'max-h-48' : 'max-h-0',
-															)}
-														>
-															{option.values
-																.filter((value) => value.isAvailable)
-																.map(({ value, to, isActive }) => (
-																	<Listbox.Option
-																		key={`option-${option.name}-${value}`}
-																		value={value}
-																	>
-																		{({ active }) => (
-																			<Link
-																				to={to}
-																				preventScrollReset
-																				className={clsx(
-																					'flex w-full cursor-pointer items-center justify-start rounded p-2 text-left text-primary transition',
-																					active && 'bg-primary/10',
-																				)}
-																				onClick={() => {
-																					if (!closeRef?.current) return
-																					closeRef.current.click()
-																				}}
-																			>
-																				{value}
-																				{isActive && (
-																					<span className="ml-2">
-																						<IconCheck />
-																					</span>
-																				)}
-																			</Link>
-																		)}
-																	</Listbox.Option>
-																))}
-														</Listbox.Options>
-													</>
-												)}
-											</Listbox>
-										</div>
-									) : (
-										option.values.map(
-											({ value, isAvailable, isActive, to }) => (
-												<Link
-													key={option.name + value}
-													to={to}
-													preventScrollReset
-													prefetch="intent"
-													replace
+				{productOptions.map((option, optionIndex) => (
+					<div
+						key={option.name}
+						className="product-options mb-4 flex flex-col flex-wrap gap-y-2 last:mb-0"
+					>
+						<Heading as="legend" size="lead" className="min-w-[4rem]">
+							{option.name}
+						</Heading>
+						<div className="flex flex-wrap items-baseline gap-4">
+							{option.optionValues.length > 7 ? (
+								<div className="relative w-full">
+									<Listbox>
+										{({ open }) => (
+											<>
+												<Listbox.Button
+													ref={closeRef}
 													className={clsx(
-														'cursor-pointer border-b-[1.5px] py-1 leading-none transition-all duration-200',
-														isActive ? 'border-primary/50' : 'border-primary/0',
-														isAvailable ? 'opacity-100' : 'opacity-50',
+														'flex w-full items-center justify-between border border-primary px-4 py-3',
+														open
+															? 'rounded-b md:rounded-b-none md:rounded-t'
+															: 'rounded',
 													)}
 												>
-													{value}
-												</Link>
-											),
-										)
-									)}
+													<span>
+														{
+															selectedVariant?.selectedOptions[optionIndex]
+																.value
+														}
+													</span>
+													<IconCaret direction={open ? 'up' : 'down'} />
+												</Listbox.Button>
+												<Listbox.Options
+													className={clsx(
+														'absolute bottom-12 z-30 grid h-48 w-full overflow-y-scroll rounded-t border border-primary bg-contrast px-2 py-2 transition-[max-height] duration-150 sm:bottom-auto md:rounded-b md:rounded-t-none md:border-b md:border-t-0',
+														open ? 'max-h-48' : 'max-h-0',
+													)}
+												>
+													{option.optionValues
+														.filter((value) => value.available)
+														.map(
+															({
+																isDifferentProduct,
+																name,
+																variantUriQuery,
+																handle,
+																selected,
+															}) => (
+																<Listbox.Option
+																	key={`option-${option.name}-${name}`}
+																	value={name}
+																>
+																	<Link
+																		{...(!isDifferentProduct
+																			? { rel: 'nofollow' }
+																			: {})}
+																		to={`/products/${handle}?${variantUriQuery}`}
+																		preventScrollReset
+																		className={clsx(
+																			'flex w-full cursor-pointer items-center justify-start rounded p-2 text-left text-primary transition',
+																			selected && 'bg-primary/10',
+																		)}
+																		onClick={() => {
+																			if (!closeRef?.current) return
+																			closeRef.current.click()
+																		}}
+																	>
+																		{name}
+																		{selected && (
+																			<span className="ml-2">
+																				<IconCheck />
+																			</span>
+																		)}
+																	</Link>
+																</Listbox.Option>
+															),
+														)}
+												</Listbox.Options>
+											</>
+										)}
+									</Listbox>
 								</div>
-							</div>
-						)
-					}}
-				</VariantSelector>
+							) : (
+								option.optionValues.map(
+									({
+										isDifferentProduct,
+										name,
+										variantUriQuery,
+										handle,
+										selected,
+										available,
+										swatch,
+									}) => (
+										<Link
+											key={option.name + name}
+											{...(!isDifferentProduct ? { rel: 'nofollow' } : {})}
+											to={`/products/${handle}?${variantUriQuery}`}
+											preventScrollReset
+											prefetch="intent"
+											replace
+											className={clsx(
+												'cursor-pointer border-b-[1.5px] py-1 leading-none transition-all duration-200',
+												selected ? 'border-primary/50' : 'border-primary/0',
+												available ? 'opacity-100' : 'opacity-50',
+											)}
+										>
+											<ProductOptionSwatch swatch={swatch} name={name} />
+										</Link>
+									),
+								)
+							)}
+						</div>
+					</div>
+				))}
 				{selectedVariant && (
 					<div className="grid items-stretch gap-4">
 						{isOutOfStock ? (
@@ -433,6 +404,31 @@ export function ProductForm({
 					</div>
 				)}
 			</div>
+		</div>
+	)
+}
+
+function ProductOptionSwatch({
+	swatch,
+	name,
+}: {
+	swatch?: Maybe<ProductOptionValueSwatch> | undefined
+	name: string
+}) {
+	const image = swatch?.image?.previewImage?.url
+	const color = swatch?.color
+
+	if (!image && !color) return name
+
+	return (
+		<div
+			aria-label={name}
+			className="h-8 w-8"
+			style={{
+				backgroundColor: color || 'transparent',
+			}}
+		>
+			{!!image && <img src={image} alt={name} />}
 		</div>
 	)
 }
@@ -487,7 +483,7 @@ function ProductDetail({
 }
 
 const PRODUCT_VARIANT_FRAGMENT = `#graphql
-  fragment ProductVariantFragment on ProductVariant {
+  fragment ProductVariant on ProductVariant {
     id
     availableForSale
     selectedOptions {
@@ -522,6 +518,52 @@ const PRODUCT_VARIANT_FRAGMENT = `#graphql
   }
 `
 
+const PRODUCT_FRAGMENT = `#graphql
+  fragment Product on Product {
+    id
+    title
+    vendor
+    handle
+    descriptionHtml
+    description
+    encodedVariantExistence
+    encodedVariantAvailability
+    options {
+      name
+      optionValues {
+        name
+        firstSelectableVariant {
+          ...ProductVariant
+        }
+        swatch {
+          color
+          image {
+            previewImage {
+              url
+            }
+          }
+        }
+      }
+    }
+    selectedOrFirstAvailableVariant(selectedOptions: $selectedOptions, ignoreUnknownOptions: true, caseInsensitiveMatch: true) {
+      ...ProductVariant
+    }
+    adjacentVariants (selectedOptions: $selectedOptions) {
+      ...ProductVariant
+    }
+    seo {
+      description
+      title
+    }
+    media(first: 7) {
+      nodes {
+        ...Media
+      }
+    }
+  }
+  ${PRODUCT_VARIANT_FRAGMENT}
+` as const
+
 const PRODUCT_QUERY = `#graphql
   query Product(
     $country: CountryCode
@@ -530,35 +572,7 @@ const PRODUCT_QUERY = `#graphql
     $selectedOptions: [SelectedOptionInput!]!
   ) @inContext(country: $country, language: $language) {
     product(handle: $handle) {
-      id
-      title
-      vendor
-      handle
-      descriptionHtml
-      description
-      options {
-        name
-        optionValues {
-          name
-        }
-      }
-      selectedVariant: variantBySelectedOptions(selectedOptions: $selectedOptions, ignoreUnknownOptions: true, caseInsensitiveMatch: true) {
-        ...ProductVariantFragment
-      }
-      media(first: 7) {
-        nodes {
-          ...Media
-        }
-      }
-      variants(first: 1) {
-        nodes {
-          ...ProductVariantFragment
-        }
-      }
-      seo {
-        description
-        title
-      }
+      ...Product
     }
     shop {
       name
@@ -576,24 +590,7 @@ const PRODUCT_QUERY = `#graphql
     }
   }
   ${MEDIA_FRAGMENT}
-  ${PRODUCT_VARIANT_FRAGMENT}
-` as const
-
-const VARIANTS_QUERY = `#graphql
-  query variants(
-    $country: CountryCode
-    $language: LanguageCode
-    $handle: String!
-  ) @inContext(country: $country, language: $language) {
-    product(handle: $handle) {
-      variants(first: 250) {
-        nodes {
-          ...ProductVariantFragment
-        }
-      }
-    }
-  }
-  ${PRODUCT_VARIANT_FRAGMENT}
+  ${PRODUCT_FRAGMENT}
 ` as const
 
 const RECOMMENDED_PRODUCTS_QUERY = `#graphql
