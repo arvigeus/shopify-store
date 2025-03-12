@@ -1,0 +1,28 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Debug Hydrogen",
+			"type": "node",
+			"request": "launch",
+			"runtimeExecutable": "npm",
+			"runtimeArgs": ["run", "dev"],
+			"console": "integratedTerminal",
+			"internalConsoleOptions": "neverOpen",
+			"autoAttachChildProcesses": true,
+			"sourceMaps": true,
+			"smartStep": true,
+			"skipFiles": ["<node_internals>/**", "**/node_modules/**"],
+			"env": {
+				"BROWSER": "chromium"
+			}
+		},
+		{
+			"name": "Attach to Hydrogen",
+			"type": "node",
+			"request": "attach",
+			"processId": "${command:PickProcess}",
+			"skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+		}
+	]
+}
