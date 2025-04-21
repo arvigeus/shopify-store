@@ -2,7 +2,7 @@
 
 - Based on [hydrogen-demo-store](https://github.com/Shopify/hydrogen-demo-store)
 - Changes since last merge:
-  [compare](https://github.com/Shopify/hydrogen-demo-store/compare/8a96f29..main)
+  [compare](https://github.com/Shopify/hydrogen-demo-store/compare/7ccc13a..main)
 
 ## Manual Merge
 

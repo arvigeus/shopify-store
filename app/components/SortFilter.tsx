@@ -185,6 +185,8 @@ function getAppliedFilterLink(
 		const fullKey = FILTER_URL_PREFIX + key
 		paramsClone.delete(fullKey, JSON.stringify(value))
 	})
+	paramsClone.delete('cursor')
+	paramsClone.delete('direction')
 	return `${location.pathname}?${paramsClone.toString()}`
 }
 
@@ -194,6 +196,8 @@ function getSortLink(
 	location: Location,
 ) {
 	params.set('sort', sort)
+	params.delete('cursor')
+	params.delete('direction')
 	return `${location.pathname}?${params.toString()}`
 }
 
@@ -204,6 +208,8 @@ function getFilterLink(
 ) {
 	const paramsClone = new URLSearchParams(params)
 	const newParams = filterInputToParams(rawInput, paramsClone)
+	newParams.delete('cursor')
+	newParams.delete('direction')
 	return `${location.pathname}?${newParams.toString()}`
 }
 
